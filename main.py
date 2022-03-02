@@ -28,7 +28,7 @@ def main():
     run = True
     clock = pygame.time.Clock()
 
-    scale = 8/60  # 1 pixel is 8/60 cm irl
+    scale = 4/30  # 1 pixel is 4/30 cm irl
 
     # Planet values
     planet_distance_to_sun = 40 / scale  # 40 cm irl
@@ -56,6 +56,9 @@ def main():
 
         planet_y = math.sin(angle) * planet_distance_to_sun + (HEIGHT/2)
 
+        # angle made between the X axis and the planet
+        real_angle = math.degrees(math.atan(math.sin(angle)/math.cos(angle)))
+
         draw_circle(planet_x, planet_y,
                     planet_radius, colors['blue'])
 
@@ -65,7 +68,7 @@ def main():
         deltaTime = (t - getTicksLastFrame) / 1000.0
         getTicksLastFrame = t
 
-        angle += 1 * deltaTime
+        angle += .5 * deltaTime
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
