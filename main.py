@@ -1,3 +1,4 @@
+from turtle import circle
 import pygame
 from pygame import gfxdraw
 import math
@@ -5,12 +6,15 @@ pygame.init()
 
 WIDTH, HEIGHT = 800, 800
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+bg_img = pygame.image.load('images/space.png')
+bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
 pygame.display.set_caption("Simulação de planetas")
 
 colors = {
     'black': (0, 0, 0),
     'white': (255, 255, 255),
-    'yellow': (255, 231, 3),
+    'yellow_out': (255, 231, 3),
+    'yellow_mid': (255, 236, 181),
     'blue': (21, 120, 196)
 }
 
@@ -41,13 +45,15 @@ def main():
     while run:
         clock.tick(60)
 
-        WIN.fill(colors['black'])
+        WIN.blit(bg_img, (0, 0))
 
         # Draw the sun
         sun_x, sun_y = WIDTH/2, HEIGHT/2  # middle of the window
         # convert 2.5 cm (radius of the real sun) to pixels
         radius = 2.5 / scale
-        draw_circle(sun_x, sun_y, radius, colors['yellow'])
+        draw_circle(sun_x, sun_y, radius, colors['yellow_out'])
+        draw_circle(sun_x, sun_y, radius-5, colors['yellow_mid'])
+
         draw_orbit(sun_x, sun_y, 40/scale, colors['white'])
 
         # Draw the planet
@@ -68,7 +74,7 @@ def main():
         deltaTime = (t - getTicksLastFrame) / 1000.0
         getTicksLastFrame = t
 
-        angle += .5 * deltaTime
+        angle += 1 * deltaTime
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
