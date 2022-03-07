@@ -1,4 +1,5 @@
 from turtle import circle
+from numpy import mat
 import pygame
 from pygame import gfxdraw
 import math
@@ -32,16 +33,21 @@ def main():
     run = True
     clock = pygame.time.Clock()
 
-    scale = 4/30  # 1 pixel is 4/30 cm irl
+    scale = 2/15  # 1 pixel is 2/15 cm irl
 
     # Planet values
     planet_distance_to_sun = 40 / scale  # 40 cm irl
     planet_x = (WIDTH/2)  # planet x coord
     planet_y = (HEIGHT/2) - planet_distance_to_sun  # planet y coord
-    planet_radius = 1 / scale  # 1cm irl
+    planet_radius = 1.5 / scale  # 1cm irl
 
     angle = 0  # angle to calculate the circular motion
     getTicksLastFrame = 0  # calculate deltatime
+
+    contar = False
+
+    cont_i = 0
+
     while run:
         clock.tick(60)
 
@@ -50,7 +56,7 @@ def main():
         # Draw the sun
         sun_x, sun_y = WIDTH/2, HEIGHT/2  # middle of the window
         # convert 2.5 cm (radius of the real sun) to pixels
-        radius = 2.5 / scale
+        radius = 5 / scale
         draw_circle(sun_x, sun_y, radius, colors['yellow_out'])
         draw_circle(sun_x, sun_y, radius-5, colors['yellow_mid'])
 
@@ -63,17 +69,32 @@ def main():
         planet_y = math.sin(angle) * planet_distance_to_sun + (HEIGHT/2)
 
         # angle made between the X axis and the planet
-        real_angle = math.degrees(math.atan(math.sin(angle)/math.cos(angle)))
+        real_angle = math.degrees(math.atan2(math.sin(angle), math.cos(angle)))
+
+        if (real_angle < 0):
+            real_angle = abs(180 + real_angle) + 180
 
         draw_circle(planet_x, planet_y,
                     planet_radius, colors['blue'])
 
-        t = pygame.time.get_ticks()
+        ticks = pygame.time.get_ticks()
 
         # deltaTime in seconds.
-        deltaTime = (t - getTicksLastFrame) / 1000.0
-        getTicksLastFrame = t
+        deltaTime = (ticks - getTicksLastFrame) / 1000.0
+        getTicksLastFrame = ticks
 
+        '''if (planet_x < 100.01):
+            contar = not contar
+            if contar:
+                cont_i = pygame.time.get_ticks()
+
+        if contar:
+            print(pygame.time.get_ticks() - cont_i)'''
+
+        print(real_angle)
+
+        # 1 = 6.3s; 1rad/s
+        # 1 = 40 cm/s
         angle += 1 * deltaTime
 
         for event in pygame.event.get():
