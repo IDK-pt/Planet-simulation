@@ -1,5 +1,3 @@
-from turtle import circle
-from numpy import mat
 import pygame
 from pygame import gfxdraw
 import math
@@ -36,17 +34,17 @@ def main():
     scale = 2/15  # 1 pixel is 2/15 cm irl
 
     # Planet values
-    planet_distance_to_sun = 40 / scale  # 40 cm irl
+    planet_real_distance_to_sun = 40  # 40 cm
+    planet_distance_to_sun = planet_real_distance_to_sun / scale  # 40 cm irl
     planet_x = (WIDTH/2)  # planet x coord
     planet_y = (HEIGHT/2) - planet_distance_to_sun  # planet y coord
     planet_radius = 1.5 / scale  # 1cm irl
+    planet_velocity = 1  # player vel (explained below)
 
     angle = 0  # angle to calculate the circular motion
     getTicksLastFrame = 0  # calculate deltatime
 
-    contar = False
-
-    cont_i = 0
+    font = pygame.font.SysFont(None, 24)  # Text font
 
     while run:
         clock.tick(60)
@@ -77,25 +75,25 @@ def main():
         draw_circle(planet_x, planet_y,
                     planet_radius, colors['blue'])
 
+        # Render the velocity
+        img = font.render(
+            f'{planet_velocity*planet_real_distance_to_sun}cm/s', True, colors['white'])
+        WIN.blit(img, (planet_x, planet_y+30))
+
+        # Render velocity vectors
+        pygame.draw.line(WIN, colors['white'],
+                         (planet_x, planet_y), (130, 100))
+
         ticks = pygame.time.get_ticks()
 
         # deltaTime in seconds.
         deltaTime = (ticks - getTicksLastFrame) / 1000.0
         getTicksLastFrame = ticks
 
-        '''if (planet_x < 100.01):
-            contar = not contar
-            if contar:
-                cont_i = pygame.time.get_ticks()
-
-        if contar:
-            print(pygame.time.get_ticks() - cont_i)'''
-
-        print(real_angle)
-
-        # 1 = 6.3s; 1rad/s
-        # 1 = 40 cm/s
-        angle += 1 * deltaTime
+        # 1: T = 6.3s
+        #    Ang_Vel = 1rad/s
+        #    Real_Vel = 40 cm/s
+        angle += planet_velocity * deltaTime
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
