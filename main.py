@@ -3,7 +3,7 @@ from pygame import gfxdraw
 import math
 pygame.init()
 
-WIDTH, HEIGHT = 800, 800
+WIDTH, HEIGHT = 800, 800  # recommendation - width and height should be the same value
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 bg_img = pygame.image.load('images/space.png')
 bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
@@ -27,11 +27,16 @@ def draw_orbit(x, y, radius, color):
     gfxdraw.aacircle(WIN, int(x), int(y), int(radius), color)
 
 
+def clamp(n, minn, maxn):
+    return max(min(maxn, n), minn)
+
+
 def main():
     run = True
     clock = pygame.time.Clock()
 
-    scale = 2/15  # 1 pixel is 2/15 cm irl
+    # 1 pixel is 40/(WIDTH-200) cm irl (200 is the ammount of pixels that the orbit will not use - 100px to the left and 100px to the right)
+    scale = 80/(WIDTH-200)
 
     # Planet values
     planet_real_distance_to_sun = 40  # 40 cm
@@ -75,14 +80,29 @@ def main():
         draw_circle(planet_x, planet_y,
                     planet_radius, colors['blue'])
 
+        # Render velocity vectors
+        if (real_angle < 180):
+            vector_x = -100
+        else:
+            vector_x = 100
+
+        if (planet_y - (HEIGHT/2) != 0):
+            vector_y = -((planet_x-(WIDTH/2)))/(planet_y-(HEIGHT/2)) * vector_x
+        else:
+            vector_y = 0
+
+        direction = pygame.math.Vector2(
+            vector_x, vector_y)
+        # divide by 2 so that the line wont get too big
+        direction.scale_to_length((planet_velocity * planet_distance_to_sun)/2)
+
+        pygame.draw.line(WIN, colors['white'],
+                         (planet_x, planet_y), (planet_x + direction.x, planet_y + direction.y))
+
         # Render the velocity
         img = font.render(
             f'{planet_velocity*planet_real_distance_to_sun}cm/s', True, colors['white'])
         WIN.blit(img, (planet_x, planet_y+30))
-
-        # Render velocity vectors
-        pygame.draw.line(WIN, colors['white'],
-                         (planet_x, planet_y), (130, 100))
 
         ticks = pygame.time.get_ticks()
 
