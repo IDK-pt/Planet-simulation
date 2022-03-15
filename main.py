@@ -1,9 +1,11 @@
+from turtle import width
 import pygame
 from pygame import gfxdraw
 import math
 pygame.init()
 
-WIDTH, HEIGHT = 800, 800  # recommendation - width and height should be the same value
+# recommendation - width and height should be the same value and not less than 265
+WIDTH, HEIGHT = 800, 800
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 bg_img = pygame.image.load('images/space.png')
 bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
@@ -35,8 +37,10 @@ def main():
     run = True
     clock = pygame.time.Clock()
 
-    # 1 pixel is 40/(WIDTH-200) cm irl (200 is the ammount of pixels that the orbit will not use - 100px to the left and 100px to the right)
-    scale = 80/(WIDTH-200)
+    # use the width or height depending on which is smaller, so that there is nothing outside of view
+    scale_dir = min(WIDTH, HEIGHT)
+    # 1 pixel is 40/(scale_dir-200) cm irl (200 is the ammount of pixels that the orbit will not use)
+    scale = 80/(scale_dir-200)
 
     # Planet values
     planet_real_distance_to_sun = 40  # 40 cm
