@@ -1,4 +1,3 @@
-from turtle import width
 import pygame
 from pygame import gfxdraw
 import math
