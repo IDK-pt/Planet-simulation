@@ -66,7 +66,7 @@ def main():
         draw_circle(sun_x, sun_y, radius, colors['yellow_out'])
         draw_circle(sun_x, sun_y, radius-5, colors['yellow_mid'])
 
-        #draw_orbit(sun_x, sun_y, 40/scale, colors['white'])
+        draw_orbit(sun_x, sun_y, 40/scale, colors['white'])
 
         # Draw the planet
 
