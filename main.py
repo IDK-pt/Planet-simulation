@@ -4,7 +4,7 @@ import math
 pygame.init()
 
 # recommendation - width and height should be the same value and not less than 265
-WIDTH, HEIGHT = 800, 800
+WIDTH, HEIGHT = 750, 750
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 bg_img = pygame.image.load('images/space.png')
 bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
@@ -66,7 +66,7 @@ def main():
         draw_circle(sun_x, sun_y, radius, colors['yellow_out'])
         draw_circle(sun_x, sun_y, radius-5, colors['yellow_mid'])
 
-        draw_orbit(sun_x, sun_y, 40/scale, colors['white'])
+        #draw_orbit(sun_x, sun_y, 40/scale, colors['white'])
 
         # Draw the planet
 
@@ -83,7 +83,7 @@ def main():
         draw_circle(planet_x, planet_y,
                     planet_radius, colors['blue'])
 
-        # Render velocity vectors
+        # Render velocity vector
         if (real_angle < 180):
             vector_x = -100
         else:
@@ -94,13 +94,26 @@ def main():
         else:
             vector_y = 0
 
-        direction = pygame.math.Vector2(
+        velocity_direction = pygame.math.Vector2(
             vector_x, vector_y)
         # divide by 2 so that the line wont get too big
-        direction.scale_to_length((planet_velocity * planet_distance_to_sun)/2)
+        velocity_direction.scale_to_length(
+            (planet_velocity * planet_distance_to_sun)/2)
 
-        pygame.draw.line(WIN, colors['white'],
-                         (planet_x, planet_y), (planet_x + direction.x, planet_y + direction.y))
+        pygame.gfxdraw.line(WIN, int(planet_x), int(planet_y), int(planet_x +
+                            velocity_direction.x), int(planet_y + velocity_direction.y), colors['white'])
+
+        # Render gravitational force
+        vector_x = (WIDTH/2) - planet_x
+        vector_y = (HEIGHT/2) - planet_y
+
+        force_direction = pygame.math.Vector2(
+            vector_x, vector_y)
+
+        force_direction.scale_to_length(WIDTH/7)
+
+        pygame.gfxdraw.line(WIN, int(planet_x), int(planet_y), int(planet_x +
+                            force_direction.x), int(planet_y + force_direction.y), colors['white'])
 
         # Render the velocity
         img = font.render(
