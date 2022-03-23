@@ -1,8 +1,8 @@
-#define STEPPING 2
+#define STEPPING 4
 #define STEP_TIME_MULT 1
 #define STEP_TIME_MICROSECONDS_LOWER 450
 #define STEP_TIME_MICROSECONDS_WAIT 450
-
+#define DIRECTION_INVERT false
 
 
 #define STEP_PIN 11
@@ -72,7 +72,7 @@ void rotateAngle(float angle){
 }
 
 void doStep(bool dir){
-digitalWrite(DIR_PIN, dir);
+digitalWrite(DIR_PIN, dir == DIRECTION_INVERT);
 digitalWrite(STEP_PIN,HIGH);
 delayMicroseconds(STEP_TIME_MICROSECONDS_LOWER * STEP_TIME_MULT);
 digitalWrite(STEP_PIN,LOW);
