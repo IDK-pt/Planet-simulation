@@ -1,7 +1,10 @@
 import pygame
 from pygame import gfxdraw
 import math
+import serial
 pygame.init()
+
+COMM_PORT = "COM11"
 
 # recommendation - width and height should be the same value and not less than 265
 WIDTH, HEIGHT = 750, 750
@@ -52,6 +55,8 @@ def main():
     getTicksLastFrame = 0  # calculate deltatime
 
     font = pygame.font.SysFont(None, 24)  # Text font
+
+    ser = serial.Serial(COMM_PORT, 115200)
 
     animation_on = False
 
@@ -152,6 +157,11 @@ def main():
             gravitation_vector_x, gravitation_vector_y)
 
         gravitation_direction.scale_to_length(WIDTH/7)
+
+        #send data to serial
+        sendString = ("A"+str(int((real_angle*100))/100)+"\n")
+        print(sendString)
+        ser.write(sendString.encode())
 
         ticks = pygame.time.get_ticks()
 
