@@ -5,6 +5,7 @@ import serial
 pygame.init()
 
 COMM_PORT = "COM11"
+ANGLE_OFFSET = 90
 
 # recommendation - width and height should be the same value and not less than 265
 WIDTH, HEIGHT = 750, 750
@@ -57,7 +58,9 @@ def main():
     font = pygame.font.SysFont(None, 24)  # Text font
 
     ser = serial.Serial(COMM_PORT, 115200)
-
+    ser.write("C\n".encode())
+    ser.write("A90\n".encode())
+    ser.write("D5\n".encode())
     animation_on = False
 
     class Button():
@@ -158,10 +161,7 @@ def main():
 
         gravitation_direction.scale_to_length(WIDTH/7)
 
-        #send data to serial
-        sendString = ("A"+str(int((real_angle*100))/100)+"\n")
-        print(sendString)
-        ser.write(sendString.encode())
+        
 
         ticks = pygame.time.get_ticks()
 
@@ -191,8 +191,20 @@ def main():
         # Planet
         draw_circle(planet_x, planet_y,
                     planet_radius, colors['blue'])
+                    
+        data = ser.readline()
+        
 
         if animation_on:
+        
+            #send data to serial
+            if data:
+                print("<<" + str(data, 'ascii'))
+                sendString = ("A"+str(int((math.degrees(angle)*10))/10+ANGLE_OFFSET)+"\n")
+                #sendString = ("B"+str(int((real_angle)*10)/10)+"\n")
+                print(">>"+sendString)
+                ser.write(sendString.encode())
+            
             # Velocity vector
             pygame.gfxdraw.line(WIN, int(planet_x), int(planet_y), int(planet_x +
                                 velocity_direction.x), int(planet_y + velocity_direction.y), colors['white'])
@@ -215,12 +227,14 @@ def main():
 
                     if animation_on:
                         btn.update(WIN, colors['green'], 'Iniciar')
-
+                        ser.write("C\n".encode())
+                        ser.write("A90\n".encode())
                         # Restart all the values
                         angle = 0
                         angle1 = 0
                     else:
                         btn.update(WIN, colors['red'], 'Recomeçar')
+                        
 
                     animation_on = not animation_on
 

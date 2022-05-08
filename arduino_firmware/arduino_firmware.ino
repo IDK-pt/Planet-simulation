@@ -1,5 +1,4 @@
 #define STEPPING 16   //valid values: 1, 2, 4 , 8, 16
-#define STEP_TIME_MULT 3
 #define STEP_TIME_MICROSECONDS_LOWER 450
 #define STEP_TIME_MICROSECONDS_WAIT 450
 #define DIRECTION_INVERT false
@@ -13,9 +12,10 @@
 #define MS2_PIN D7
 #define MS3_PIN D6
 
-bool endstopState = false;
+bool homing = false;
 float currentAngle = 0.0f;
 float targetAngle = 0.0f;
+int STEP_TIME_MULT = 3;
 
 void setup() {
   pinMode(STEP_PIN,OUTPUT); 
@@ -57,6 +57,7 @@ void setup() {
   doHome();
 }
 void loop() {
+  static long lastCommand;
   if (Serial.available()){
     String recieveString = Serial.readStringUntil('\n');
     if (recieveString.startsWith("A")) {
@@ -81,20 +82,31 @@ void loop() {
       doHome();
     }
 
+    if (recieveString.startsWith("D")) {
+      STEP_TIME_MULT = recieveString.substring(1).toInt();
+      }
    
+   lastCommand = millis();
+   Serial.println("R");
   }
+
+  if(millis() - lastCommand > 1000){
+    Serial.println("R");
+  }
+  
 }
 
 void setAngle(float angle){
   targetAngle = angle;
 
-  Serial.print("current:");
+  /*Serial.print("current:");
     Serial.println(currentAngle);
     Serial.print("target:");
     Serial.println(targetAngle);
   Serial.print("delta:");
     Serial.println(targetAngle - currentAngle);
      Serial.println();
+     */
   rotateAngle(targetAngle - currentAngle);
 }
 
@@ -121,6 +133,7 @@ ICACHE_RAM_ATTR void endstopInt(){
 static long lastTime;
   if(digitalRead(ENDSTP_PIN)){
     if(millis() - lastTime > 500){
+      if (homing)
       currentAngle = 0.0f;
     }
   } 
@@ -128,13 +141,12 @@ static long lastTime;
 }
 
 void doHome(){
+  homing = true;
   currentAngle = 1.0f;
-  for(int i = 0; i < 400*STEPPING; i++){
+  for(int i = 0; i < 250*STEPPING; i++){
     if(currentAngle == 0.0f) break;
     doStep(true);
-    if(currentAngle == 0.0f) break;
-      
-    
+    if(currentAngle == 0.0f) break;    
   }
-
+  homing = false;
 }
