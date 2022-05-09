@@ -61,7 +61,7 @@ def main():
     ser.write("C\n".encode())
     ser.write("A90\n".encode())
     ser.write("D3\n".encode())
-    ser.write("E100\n".encode())
+    ser.write("E150\n".encode())
     animation_on = False
 
     class Button():
@@ -201,7 +201,7 @@ def main():
             #send data to serial
             if data:
                 print("<<" + str(data, 'ascii'))
-                sendString = ("A"+str(int((math.degrees(angle)*10))/10+ANGLE_OFFSET)+"\n")
+                sendString = ("A"+str(int((math.degrees(angle)*100))/100+ANGLE_OFFSET)+"\n")
                 #sendString = ("B"+str(int((real_angle)*10)/10)+"\n")
                 print(">>"+sendString)
                 ser.write(sendString.encode())
