@@ -16,6 +16,7 @@ bool homing = false;
 float currentAngle = 0.0f;
 float targetAngle = 0.0f;
 int STEP_TIME_MULT = 3;
+int STEP_DELAY = 10;
 
 void setup() {
   pinMode(STEP_PIN,OUTPUT); 
@@ -85,6 +86,9 @@ void loop() {
     if (recieveString.startsWith("D")) {
       STEP_TIME_MULT = recieveString.substring(1).toInt();
       }
+     if (recieveString.startsWith("E")) {
+     STEP_DELAY = recieveString.substring(1).toInt();
+     }
    
    lastCommand = millis();
    Serial.println("R");
@@ -115,6 +119,7 @@ void rotateAngle(float angle){
   for(int i = 0; i < abs(angle)/(1.8/STEPPING); i++){
     doStep(dir);
     yield();
+    delayMicroseconds(STEP_DELAY);
   }
   if(targetAngle != currentAngle){
     currentAngle += angle;

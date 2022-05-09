@@ -60,7 +60,8 @@ def main():
     ser = serial.Serial(COMM_PORT, 115200)
     ser.write("C\n".encode())
     ser.write("A90\n".encode())
-    ser.write("D5\n".encode())
+    ser.write("D3\n".encode())
+    ser.write("E100\n".encode())
     animation_on = False
 
     class Button():
